@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Reservas</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; }
+        form { background: #f5f5f5; padding: 15px; border-radius: 8px; }
+        input, button { display: block; width: 100%; margin-bottom: 10px; padding: 8px; }
+        .error { color: red; font-size: 14px; }
+        .reserva { background: white; padding: 10px; border: 1px solid #ddd; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Formulario de Reserva</h2>
+    <form id="reservaForm">
+        <input type="text" id="nombre" placeholder="Nombre del Cliente" required>
+        <input type="tel" id="telefono" placeholder="Teléfono (9 dígitos)" pattern="[0-9]{9}" required>
+        <input type="datetime-local" id="fechaHora" required>
+        <input type="number" id="personas" placeholder="Número de personas" min="1" max="10" required>
+        <p class="error" id="errorMensaje"></p>
+        <button type="submit">Reservar</button>
+    </form>
+
+    <h2>Reservas</h2>
+    <div id="listaReservas"></div>
+
+    <script>
+        let reservas = JSON.parse(localStorage.getItem('reservas')) || [];
+
+        document.getElementById('fechaHora').min = new Date().toISOString().slice(0, 16);
+
+        document.getElementById('telefono').addEventListener('input', function () {
+            this.setCustomValidity(this.value.length === 9 ? '' : 'Debe tener 9 dígitos');
+        });
+
+        document.getElementById('reservaForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            agregarReserva();
+        });
+
+        function agregarReserva() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const fechaHora = document.getElementById('fechaHora').value;
+            const personas = parseInt(document.getElementById('personas').value);
+            const errorMensaje = document.getElementById('errorMensaje');
+
+            const mismaHora = reservas.filter(r => r.fecha === fechaHora);
+            if (mismaHora.length >= 4) {
+                errorMensaje.textContent = 'Ya hay 4 reservas en este horario. Elige otro.';
+                return;
+            }
+
+            const reserva = { 
+                id: Date.now(), 
+                cliente: nombre, 
+                telefono: telefono,
+                personas: personas, 
+                fecha: fechaHora, 
+                estado: "pendiente" 
+            };
+
+            reservas.push(reserva);
+            localStorage.setItem('reservas', JSON.stringify(reservas));
+
+            errorMensaje.textContent = '';
+            document.getElementById('reservaForm').reset();
+            renderizarReservas();
+        }
+
+        function renderizarReservas() {
+            const lista = document.getElementById('listaReservas');
+            lista.innerHTML = '';
+
+            const fragmento = document.createDocumentFragment();
+
+            reservas.forEach((reserva) => {
+                const div = document.createElement('div');
+                div.classList.add('reserva');
+
+                // Formatear fecha y hora
+                const fecha = new Date(reserva.fecha);
+                const fechaFormateada = fecha.toLocaleDateString('es-ES');
+                const horaFormateada = fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+                div.innerHTML = `
+                    <p><strong>${reserva.cliente}</strong> - ${fechaFormateada} | ${horaFormateada}</p>
+                    <p>Tel: ${reserva.telefono} | Personas: ${reserva.personas}</p>
+                    <p>Estado: ${reserva.estado}</p>
+                    <button onclick="eliminarReserva(${reserva.id})">Eliminar</button>
+                `;
+                fragmento.appendChild(div);
+            });
+
+            lista.appendChild(fragmento);
+        }
+
+        function eliminarReserva(id) {
+            reservas = reservas.filter(reserva => reserva.id !== id);
+            localStorage.setItem('reservas', JSON.stringify(reservas));
+            renderizarReservas();
+        }
+
+        renderizarReservas();
+    </script>
+
+</body>
+</html>
