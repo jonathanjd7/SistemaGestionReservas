@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="src/css/estilo.css">
-    <title>Sistema de gestion de Restaurante</title>
-    
+    <link rel="stylesheet" href="./css/estilos.css">
+    <title>Sistema de Gestion de Restaurante</title>
+
 </head>
 <body>
-    <h1>Sistema de gestion de Restaurante</h1>
+    <h1>Callao 24 Restaurant</h1>
     
     <nav aria-label="Módulos principales">
         <a href="#reservas">Reservas</a>
-        <a href="#tareas">Tareas</a>
+        <a href="./html/tareas.html" target="_self">Tareas</a>
     </nav>
+    <div class="hero">
+    <img src="./restaurante.jpg" alt="restaurante">
+    <div class="overlay">
+        <a href="./html/reservas.html" class="btn" target="_self">RESERVAR</a>
+      </div>
+    </div>
     
     <section id="reservas">
         <h2>Reservas</h2>
@@ -23,11 +29,11 @@
                 <p>Cliente: Juan Pérez</p>
             </article>
             <article class="reserva-card">
-                <time datetime="2025-03-17T12:30">17 Mar 2025, 12:30 PM</time>
+                <time datetime="2025-03-23T14:30">23 Mar 2025, 2:30 PM</time>
                 <p>Cliente: María López</p>
             </article>
             <article class="reserva-card">
-                <time datetime="2025-03-17T15:00">17 Mar 2025, 3:00 PM</time>
+                <time datetime="2025-03-20T20:00">17 Mar 2025, 8:00 PM</time>
                 <p>Cliente: Carlos García</p>
             </article>
         </div>
@@ -43,21 +49,21 @@
         <div class="container">
             <article class="tarea-card">
                 <time datetime="2025-03-20">20 Mar 2025</time>
-                <p>Tarea: Rediseño de la interfaz</p>
+                <p>Tarea: Reposicion stock vinos</p>
                 <progress value="75" max="100"></progress>
-                <button onclick="verDetalles('Rediseño de la interfaz', '2025-03-20', 'Alta', 90)">Ver detalles</button>
+                <button onclick="verDetalles('ReStock Vinos', '2025-03-20', 'Alta', 90)">Ver detalles</button>
             </article>
             <article class="tarea-card">
                 <time datetime="2025-03-22">22 Mar 2025</time>
-                <p>Tarea: Integración con API</p>
+                <p>Tarea: Limpieza cocina</p>
                 <progress value="50" max="100"></progress>
-                <button onclick="verDetalles('Integración con API', '2025-03-22', 'Media', 60)">Ver detalles</button>
+                <button onclick="verDetalles('Limpieza hornos, fregar suelos, limpiar ollas y cubiertos', '2025-03-22', 'Media', 80)">Ver detalles</button>
             </article>
             <article class="tarea-card">
                 <time datetime="2025-03-25">25 Mar 2025</time>
-                <p>Tarea: Pruebas y documentación</p>
+                <p>Tarea: Hacer inventario de los alimentos que se necesitan </p>
                 <progress value="30" max="100"></progress>
-                <button onclick="verDetalles('Pruebas y documentación', '2025-03-25', 'Baja', 30)">Ver detalles</button>
+                <button onclick="verDetalles('Ir al Mercado a comprar el verduras y carne para toda la semana', '2025-03-25', 'Baja', 20)">Ver detalles</button>
             </article>
         </div>
     </section>
@@ -84,4 +90,3 @@
     </script>
 </body>
 </html>
-
