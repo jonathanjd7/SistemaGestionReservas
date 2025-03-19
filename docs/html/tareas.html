@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/estilos3.css">
+    <title>Gestión de Tareas</title>
+</head>
+<body>
+
+
+<section id="tareas1">
+        <h2>Gestión de Tareas</h2>
+        <div class="container">
+            <article class="tarea-card">
+                <time datetime="2025-03-20">20 Mar 2025</time>
+                <p>Tarea: Reposicion stock vinos</p>
+                <progress value="75" max="100"></progress>
+                <button onclick="verDetalles('ReStock Vinos', '2025-03-20', 'Alta', 90)">Ver detalles</button>
+            </article>
+            <article class="tarea-card">
+                <time datetime="2025-03-22">22 Mar 2025</time>
+                <p>Tarea: Limpieza cocina</p>
+                <progress value="50" max="100"></progress>
+                <button onclick="verDetalles('Limpieza hornos, fregar suelos, limpiar ollas y cubiertos', '2025-03-22', 'Media', 80)">Ver detalles</button>
+            </article>
+            <article class="tarea-card">
+                <time datetime="2025-03-25">25 Mar 2025</time>
+                <p>Tarea: Hacer inventario de los alimentos que se necesitan </p>
+                <progress value="30" max="100"></progress>
+                <button onclick="verDetalles('Ir al Mercado a comprar el verduras y carne para toda la semana', '2025-03-25', 'Baja', 20)">Ver detalles</button>
+            </article>
+        </div>
+    </section>
+    
+    <dialog id="detalle-tarea">
+        <h2>Detalles de la Tarea</h2>
+        <p id="descripcion"></p>
+        <p>Fecha límite: <span id="fecha-limite"></span></p>
+        <p>Prioridad: <meter id="prioridad" min="0" max="100"></meter></p>
+        <button onclick="cerrarDialogo()">Cerrar</button>
+    </dialog>
+
+    <h2>Formulario de Tareas</h2>
+    <form id="tareasForm">
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" required>
+
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcionTarea" title="des" rows="3"></textarea>
+
+        <label for="fechaLimite">Fecha Límite:</label>
+        <input type="datetime-local" id="fechaLimite" required>
+
+        <label for="prioridad">Prioridad:</label>
+        <select id="prioridad">
+            <option value="alta">Alta</option>
+            <option value="media">Media</option>
+            <option value="baja">Baja</option>
+        </select>
+
+        <label for="dependencias">Dependencias (separadas por comas):</label>
+        <input type="text" id="dependencias">
+
+        <button type="submit">Agregar Tarea</button>
+    </form>
+
+    <h2>Tareas</h2>
+    <div id="listaTareas"></div>
+
+      <script>
+        // ... (tu JavaScript existente para las reservas) ...
+
+        // Tareas
+        const tareasForm = document.getElementById('tareasForm');
+        const listaTareas = document.getElementById('listaTareas');
+
+        const cargarDatos = () => {
+            return JSON.parse(localStorage.getItem('tareas')) || [];
+        };
+
+        let tareas = cargarDatos();
+
+        function agregarTarea(event) {
+            event.preventDefault();
+
+            const tarea = {
+                id: Date.now(),
+                titulo: document.getElementById('titulo').value.trim(),
+                descripcionTarea: document.getElementById('descripcionTarea').value.trim(), //habia que cambiar el id porque coincidia con otro. antes era descripcion ahora DescripcionTarea.
+                fechaLimite: document.getElementById('fechaLimite').value,
+                prioridad: document.getElementById('prioridad').value,
+                dependencias: document.getElementById('dependencias').value.split(',').map(dep => dep.trim()),
+                estado: 'pendiente'
+            };
+
+            tareas.push(tarea);
+            localStorage.setItem('tareas', JSON.stringify(tareas));
+
+            tareasForm.reset();
+            renderizarTareas();
+        }
+
+        function renderizarTareas() {
+            listaTareas.innerHTML = '';
+            const fragmento = document.createDocumentFragment();
+
+            tareas.forEach(tarea => {
+                const div = document.createElement('div');
+                div.classList.add('tarea');
+                div.innerHTML = `
+                    <p><strong>${tarea.titulo}</strong> - ${tarea.fechaLimite}</p>
+                    <p>Prioridad: ${tarea.prioridad} | Estado: ${tarea.estado}</p>
+                    <p>Dependencias: ${tarea.dependencias.join(', ')}</p>
+                    <button onclick="eliminarTarea(${tarea.id})">Eliminar</button>
+                `;
+                fragmento.appendChild(div);
+            });
+
+            listaTareas.appendChild(fragmento);
+        }
+
+        function eliminarTarea(id) {
+            tareas = tareas.filter(tarea => tarea.id !== id);
+            localStorage.setItem('tareas', JSON.stringify(tareas));
+            renderizarTareas();
+        }
+
+        tareasForm.addEventListener('submit', agregarTarea);
+        renderizarTareas();
+    </script>
+      <a href="../index.html" class="btn">Volver a Inicio</a>
+</body>
+</html>
