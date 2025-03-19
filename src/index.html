@@ -1,1 +1,87 @@
-hola
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="src/css/estilo.css">
+    <title>Sistema de gestion de Restaurante</title>
+    
+</head>
+<body>
+    <h1>Sistema de gestion de Restaurante</h1>
+    
+    <nav aria-label="Módulos principales">
+        <a href="#reservas">Reservas</a>
+        <a href="#tareas">Tareas</a>
+    </nav>
+    
+    <section id="reservas">
+        <h2>Reservas</h2>
+        <div class="container">
+            <article class="reserva-card">
+                <time datetime="2025-03-17T10:00">17 Mar 2025, 10:00 AM</time>
+                <p>Cliente: Juan Pérez</p>
+            </article>
+            <article class="reserva-card">
+                <time datetime="2025-03-17T12:30">17 Mar 2025, 12:30 PM</time>
+                <p>Cliente: María López</p>
+            </article>
+            <article class="reserva-card">
+                <time datetime="2025-03-17T15:00">17 Mar 2025, 3:00 PM</time>
+                <p>Cliente: Carlos García</p>
+            </article>
+        </div>
+        <aside class="estadisticas">
+            <h2>Ocupación Horaria</h2>
+            <meter value="3" min="0" max="5"></meter>
+            <p>Reservas actuales: 3 de 5 disponibles.</p>
+        </aside>
+    </section>
+    
+    <section id="tareas">
+        <h2>Gestión de Tareas</h2>
+        <div class="container">
+            <article class="tarea-card">
+                <time datetime="2025-03-20">20 Mar 2025</time>
+                <p>Tarea: Rediseño de la interfaz</p>
+                <progress value="75" max="100"></progress>
+                <button onclick="verDetalles('Rediseño de la interfaz', '2025-03-20', 'Alta', 90)">Ver detalles</button>
+            </article>
+            <article class="tarea-card">
+                <time datetime="2025-03-22">22 Mar 2025</time>
+                <p>Tarea: Integración con API</p>
+                <progress value="50" max="100"></progress>
+                <button onclick="verDetalles('Integración con API', '2025-03-22', 'Media', 60)">Ver detalles</button>
+            </article>
+            <article class="tarea-card">
+                <time datetime="2025-03-25">25 Mar 2025</time>
+                <p>Tarea: Pruebas y documentación</p>
+                <progress value="30" max="100"></progress>
+                <button onclick="verDetalles('Pruebas y documentación', '2025-03-25', 'Baja', 30)">Ver detalles</button>
+            </article>
+        </div>
+    </section>
+    
+    <dialog id="detalle-tarea">
+        <h2>Detalles de la Tarea</h2>
+        <p id="descripcion"></p>
+        <p>Fecha límite: <span id="fecha-limite"></span></p>
+        <p>Prioridad: <meter id="prioridad" min="0" max="100"></meter></p>
+        <button onclick="cerrarDialogo()">Cerrar</button>
+    </dialog>
+    
+    <script>
+        function verDetalles(descripcion, fecha, prioridad, nivel) {
+            document.getElementById('descripcion').textContent = descripcion;
+            document.getElementById('fecha-limite').textContent = fecha;
+            document.getElementById('prioridad').value = nivel;
+            document.getElementById('detalle-tarea').showModal();
+        }
+        
+        function cerrarDialogo() {
+            document.getElementById('detalle-tarea').close();
+        }
+    </script>
+</body>
+</html>
+

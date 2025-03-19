@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas</title>
+    <link rel="stylesheet" href="../css/estilos2.css">
+</head>
+<body>
+
+
+
+<section id="reservas">
+    <h2>Reservas</h2>
+
+    <div class="container">
+        <article class="reserva-card">
+            <time datetime="2025-03-17T10:00">17 Mar 2025, 10:00 AM</time>
+            <p>Cliente: Juan Pérez</p>
+        </article>
+        <article class="reserva-card">
+            <time datetime="2025-03-23T14:30">23 Mar 2025, 2:30 PM</time>
+            <p>Cliente: María López</p>
+        </article>
+        <article class="reserva-card">
+            <time datetime="2025-03-20T20:00">17 Mar 2025, 8:00 PM</time>
+            <p>Cliente: Carlos García</p>
+        </article>
+    </div>
+    <br>
+    <br>
+    <aside class="estadisticas">
+        <h2>Ocupación Horaria</h2>
+        <meter value="3" min="0" max="5"></meter>
+        <p>Reservas actuales: 3 de 5 disponibles.</p>
+    </aside>
+</section>
+<h2>Formulario de Reserva</h2>
+    <form id="reservaForm">
+        <input type="text" id="nombre" placeholder="Nombre del Cliente" required>
+        <input type="tel" id="telefono" placeholder="Teléfono (9 dígitos)" pattern="[0-9]{9}" required>
+        <input type="datetime-local" id="fechaHora" title="hora" required>
+        <input type="number" id="personas" placeholder="Número de personas" min="1" max="10" required>
+        <p class="error" id="errorMensaje"></p>
+        <button class="res" type="submit">Reservar</button>
+    </form>
+
+    <h2>Nuevas Reservas</h2>
+    <div id="listaReservas"></div>
+
+    <a href="../index.html" class="btn">Volver a Inicio</a>
+
+
+
+    
+<script>
+    function verDetalles(descripcion, fecha, prioridad, nivel) {
+        document.getElementById('descripcion').textContent = descripcion;
+        document.getElementById('fecha-limite').textContent = fecha;
+        document.getElementById('prioridad').value = nivel;
+        document.getElementById('detalle-tarea').showModal();
+    }
+    
+    function cerrarDialogo() {
+        document.getElementById('detalle-tarea').close();
+    }
+</script>
+<script>
+    let reservas = JSON.parse(localStorage.getItem('reservas')) || [];
+
+    document.getElementById('fechaHora').min = new Date().toISOString().slice(0, 16);
+
+    document.getElementById('telefono').addEventListener('input', function () {
+        this.setCustomValidity(this.value.length === 9 ? '' : 'Debe tener 9 dígitos');
+    });
+
+    document.getElementById('reservaForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        agregarReserva();
+    });
+
+    function agregarReserva() {
+        const nombre = document.getElementById('nombre').value.trim();
+        const telefono = document.getElementById('telefono').value.trim();
+        const fechaHora = document.getElementById('fechaHora').value;
+        const personas = parseInt(document.getElementById('personas').value);
+        const errorMensaje = document.getElementById('errorMensaje');
+
+        const mismaHora = reservas.filter(r => r.fecha === fechaHora);
+        if (mismaHora.length >= 4) {
+            errorMensaje.textContent = 'Ya hay 4 reservas en este horario. Elige otro.';
+            return;
+        }
+
+        const reserva = { 
+            id: Date.now(), 
+            cliente: nombre, 
+            telefono: telefono,
+            personas: personas, 
+            fecha: fechaHora, 
+            estado: "pendiente" 
+        };
+
+        reservas.push(reserva);
+        localStorage.setItem('reservas', JSON.stringify(reservas));
+
+        errorMensaje.textContent = '';
+        document.getElementById('reservaForm').reset();
+        renderizarReservas();
+    }
+
+    function renderizarReservas() {
+        const lista = document.getElementById('listaReservas');
+        lista.innerHTML = '';
+
+        const fragmento = document.createDocumentFragment();
+
+        reservas.forEach((reserva) => {
+            const div = document.createElement('div');
+            div.classList.add('reserva');
+
+            // Formatear fecha y hora
+            const fecha = new Date(reserva.fecha);
+            const fechaFormateada = fecha.toLocaleDateString('es-ES');
+            const horaFormateada = fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+            div.innerHTML = `
+                <p><strong>${reserva.cliente}</strong> - ${fechaFormateada} | ${horaFormateada}</p>
+                <p>Tel: ${reserva.telefono} | Personas: ${reserva.personas}</p>
+                <p>Estado: ${reserva.estado}</p>
+                <button onclick="eliminarReserva(${reserva.id})">Eliminar</button>
+            `;
+            fragmento.appendChild(div);
+        });
+
+        lista.appendChild(fragmento);
+    }
+
+    function eliminarReserva(id) {
+        reservas = reservas.filter(reserva => reserva.id !== id);
+        localStorage.setItem('reservas', JSON.stringify(reservas));
+        renderizarReservas();
+    }
+
+    renderizarReservas();
+</script>
+</body>
+</html>
